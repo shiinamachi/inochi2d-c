@@ -47,6 +47,8 @@ extern "C" {
     EXPORT_I2D void inBlockProtected(void (*func)());
     EXPORT_I2D void inViewportSet(uint width, uint height);
     EXPORT_I2D void inViewportGet(uint* width, uint* height);
+    EXPORT_I2D size_t inViewportDataLength();
+    EXPORT_I2D void inDumpViewport(uint8_t* dumpTo, size_t length);
     #ifdef INOCHI2D_GLYES
         EXPORT_I2D void inSceneBegin();
         EXPORT_I2D void inSceneEnd();
