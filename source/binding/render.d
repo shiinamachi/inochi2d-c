@@ -6,4 +6,4 @@
     
     Authors: Luna Nielsen, seagetch
 */
-module binding;
+module binding.render;

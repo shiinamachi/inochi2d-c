@@ -5,7 +5,7 @@
     Authors: Luna Nielsen, seagetch
 */
 module binding;
-public import std.string : fromStringz;
+public import std.string : fromStringz, toStringz;
 public import Inochi2D = inochi2d;
 public import inochi2d.integration;
 public import inochi2d.math;
@@ -14,8 +14,10 @@ public import core.memory;
 
 import core.sys.windows.windows;
 import core.sys.windows.dll;
+version(Posix) import core.sys.posix.stdlib : setenv, unsetenv;
 import bindbc.opengl;
 import core.stdc.stdlib;
+import core.stdc.string;
 import std.datetime.systime;
 import utils;
 
@@ -47,6 +49,27 @@ void inInit(i2DTimingFuncSignature func) {
     try {
         version(NotWindows) Runtime.initialize();
         version(yesgl) {
+            version(Posix) {
+                auto sessionTypePtr = getenv("XDG_SESSION_TYPE");
+                string previousSessionType = null;
+                if (sessionTypePtr !is null) {
+                    previousSessionType = sessionTypePtr.fromStringz.idup;
+                }
+
+                bool needsWaylandSessionType = sessionTypePtr is null || strcmp(sessionTypePtr, "wayland") != 0;
+                if (needsWaylandSessionType) {
+                    setenv("XDG_SESSION_TYPE", "wayland", 1);
+                }
+                scope(exit) {
+                    if (needsWaylandSessionType) {
+                        if (sessionTypePtr is null) {
+                            unsetenv("XDG_SESSION_TYPE");
+                        } else {
+                            setenv("XDG_SESSION_TYPE", previousSessionType.toStringz, 1);
+                        }
+                    }
+                }
+            }
             loadOpenGL();
         }
         if (func is null) {

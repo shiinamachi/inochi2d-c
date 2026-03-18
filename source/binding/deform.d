@@ -47,7 +47,7 @@ bool inParameterBindingGetDeformation(InParameterBinding* binding, uint x, uint 
     if (deformBinding is null)
         return false;
 
-    vec2array2farray(deformBinding.values[x][y].vertexOffsets, values, length);
+    vec2array2farray(deformBinding.values[x][y].vertexOffsets[], values, length);
     return true;
 }
 
@@ -56,8 +56,8 @@ bool inParameterBindingSetDeformation(InParameterBinding* binding, uint x, uint 
     if (deformBinding is null)
         return false;
 
-    deformBinding.values[x][y].vertexOffsets.length = length / 2;
-    memcpy(deformBinding.values[x][y].vertexOffsets.ptr, values, length * float.sizeof);
+    deformBinding.values[x][y].vertexOffsets.resize(length / 2);
+    memcpy(deformBinding.values[x][y].vertexOffsets.data, values, length * float.sizeof);
     deformBinding.isSet_[x][y] = true;
     return true;
 }
